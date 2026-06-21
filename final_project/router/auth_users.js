@@ -29,6 +29,7 @@ const authenticatedUser = (username,password)=>{ //returns boolean
     }
 }
 
+regd_users.use(session({secret:"fingerpint"},resave=true,saveUninitialized=true));
 
 //only registered users can login
 regd_users.post("/login", (req,res) => {
@@ -54,7 +55,7 @@ regd_users.post("/login", (req,res) => {
             req.session.authorization = {
                 accessToken, username
             }
-            return res.status(200).send(`Welcome ${loginCredentials.username}\t${accessToken}\n`);
+            return res.status(200).send(`Welcome ${loginCredentials.username}\t${req.session.authorization.accessToken}\n`);
         }
         else
             return res.status(208).json({message:"Invalid login check username and password again"});
