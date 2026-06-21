@@ -49,13 +49,13 @@ regd_users.post("/login", (req,res) => {
             const username = loginCredentials.username;
 
             let accessToken = jwt.sign({
-                data : loginCredentials.password,
+                data : loginCredentials.username,
             }, 'access',{expiresIn:60*60});
 
             req.session.authorization = {
                 accessToken, username
             }
-            return res.status(200).send(`${req.session.authorization.accessToken}`);
+            return res.status(200).send(`${accessToken}`);
         }
         else
             return res.status(208).json({message:"Invalid login check username and password again"});

@@ -17,7 +17,7 @@ app.use("/customer/auth/*", function auth(req,res,next){
         let token = req.session.authorization.accessToken;
         jwt.verify(token,"access",(err,user) =>{
             if(!err){
-                req.user = user;
+                req.user = user.data;
                 next();
             } else {
                 return res.status(403).json({message:"User not authenticated"});
@@ -26,9 +26,9 @@ app.use("/customer/auth/*", function auth(req,res,next){
 
     } else if(req.headers.authorization){
         let token = req.headers.authorization.split(' ')[1];
-        jwt.verify(token,"access",(err,user) =>{
+        jwt.verify(token,"access",(err, user) =>{
             if(!err){
-                req.user = req.headers.authorization.split(' ')[2];
+                req.user = user.data;
                 next();
             } else {
                 return res.status(403).json({message:"User not authenticated"});
