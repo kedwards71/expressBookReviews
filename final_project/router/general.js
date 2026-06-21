@@ -169,5 +169,44 @@ public_users.get('/review/:isbn',async function (req, res) {
    else
     res.status(404).json({message:'Book with that isbn not found'});
 });
-
+// TASK 10
+public_users.get('/axios/', async function (req, res) {
+    try{
+        const response = await axios.get('http://localhost:5000/');
+        res.status(200).send(response.data);
+    } catch (error) {
+        res.status(404).send({message:"Couldn't connect with books"});
+    }
+})
+//TASK 11
+public_users.get('/axios/isbn/:isbn', async function (req,res){
+    try{
+        const response = await axios.get(`http://localhost:5000/isbn/${req.params.isbn}`)
+        res.status(200).send(response.data);
+    } catch (error) {
+        res.status(404).send({message:"Unable to find any books with that isbn"});
+    }
+})
+//TASK 12
+public_users.get('/axios/author/:author', async function (req,res){
+    const promise = new Promise((resolve,reject)=>{
+        axios.get(`http://localhost:5000/author/${req.params.author}`)
+        .then((response)=>resolve(response.data))
+        .catch((err)=>reject(err))
+    })
+    promise
+    .then((data)=>res.status(200).send(data))
+    .catch((err)=>res.status(404).send({message:"No books by that author found!"}))
+})
+//TASK 13
+public_users.get('/axios/title/:title', async function(req,res){
+    const promise = new Promise((resolve,reject)=>{
+        axios.get(`http://localhost:5000/title/${req.params.title}`)
+        .then((response) => resolve(response.data))
+        .catch((err)=>reject(err));
+    })
+    promise
+    .then((data)=>res.status(200).send(data))
+    .catch((err)=>res.status(404).send({message:"No books with that title found!"}))
+})
 module.exports.general = public_users;
