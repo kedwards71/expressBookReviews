@@ -61,7 +61,7 @@ regd_users.post("/login", (req,res) => {
             return res.status(208).json({message:"Invalid login check username and password again"});
     }
     else{
-        return res.send("No users exist by that name\n")
+        return res.status(404).json("No users exist by that name\n")
     }
   }
 });
@@ -74,7 +74,27 @@ regd_users.get("/auth/viewall",(req,res)=>{
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const targetIsbn = req.params.isbn;
+  if(books[targetIsbn])
+  {
+    if(isValid(req.user))
+    {
+        if(books[targetIsbn].reviews[req.user])
+        {
+            const prevReview = books[targetIsbn].reviews[req.user];
+            books[targetIsbn].reviews[req.user] = req.query.review;
+            return res.status(200).send(`Your review has been updated from '${prevReview}' to '${books[targetIsbn].reviews[req.user]}'\n`)
+        }
+        else{
+            books[targetIsbn].reviews[req.user] = req.query.review;
+            return res.status(200).send(`Your review of '${books[targetIsbn].reviews[req.user]}' has been successfully left.\n`);
+        }
+    } else {
+        return res.status(403).json('You need to be registered and logged in to leave a review!\n');
+    }
+  }else{
+    return res.status(404).json('The book with that ISBN doesnt exist in our records\n')
+  }
 });
 
 module.exports.authenticated = regd_users;
