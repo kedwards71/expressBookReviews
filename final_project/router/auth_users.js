@@ -55,7 +55,8 @@ regd_users.post("/login", (req,res) => {
             req.session.authorization = {
                 accessToken, username
             }
-            return res.status(200).send(`${accessToken}`);
+            console.log(accessToken);
+            return res.status(200).send(`Welcome ${req.session.authorization.username}`);
         }
         else
             return res.status(208).json({message:"Invalid login check username and password again"});
