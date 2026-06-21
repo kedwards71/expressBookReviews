@@ -11,19 +11,19 @@ public_users.post("/register", (req,res) => {
     "username" : req.body.username,
     "password" : req.body.password
   }
-  if(!username||!password){
+  if(!newUser.username||!newUser.password){
     return res.send('Please fill out both fields');
   }
   else{
-    const filteredUsers = users.filter((user)=>user["username"] === newUser["username"]);
+    const filteredUsers = users.filter((user)=>user.username === newUser.username);
     if(filteredUsers.length > 0)
     {
-        return res.send(`${username} is already taken please try again!\n`);
+        return res.send(`${newUser.username} is already taken please try again!\n`);
     }
     else
     {
         users.push(newUser);
-        return res.send(`${username} has been successfully registered you can now log in!\n`)
+        return res.send(`${newUser.username} has been successfully registered you can now log in!\n`)
     }
   }
 });
