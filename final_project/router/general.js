@@ -5,6 +5,84 @@ let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
 
+const getAllBooks = async() =>{
+    return await new Promise((resolve,reject)=>{
+        setTimeout(()=>{
+            resolve('All books found!');
+        },2000)   
+    }).then((successMessage)=>{
+        console.log(successMessage);
+        return books;
+    }).catch(err=>console.error(err))
+}
+
+const getBooksByISBN = async(isbn) => {
+    let exists = false;
+    return await new Promise((resolve,reject)=>{
+        setTimeout(()=>{
+            if(books[isbn])
+            {
+                exists = true;
+                resolve('Target Isbn found!\n')
+            }
+            else
+            {
+                resolve('Target Isbn not found!\n')
+            }
+        },3000)
+    }).then((successMessage)=>{
+        console.log(successMessage);
+        if(exists)
+            return books[isbn];
+    })
+}
+
+const getBooksByAuthor = async(targetAuthor) => {
+    let filteredBooks = [];
+    return await new Promise((resolve,reject)=>{
+        setTimeout(()=>{
+            for(i in books)
+            {
+                if(books[i].author === targetAuthor)
+                    filteredBooks.push(books[i]);
+            }
+            if(filteredBooks.length>0)
+            {
+                resolve('Books by target found!')
+            }
+            else{
+                resolve('No books found!')
+            }
+        },2000)
+    }).then((successMessage)=>{
+        console.log(successMessage);
+        return filteredBooks;
+    }).catch(err=>console.error(err))
+}
+
+const getBooksByTitle = async(targetTitle) =>{
+    let filteredBooks = [];
+    return await new Promise((resolve,reject)=>{
+        setTimeout(()=>{
+            for(i in books)
+            {
+                if(books[i].title === targetTitle)
+                    filteredBooks.push(books[i]);
+            }
+            if(filteredBooks.length>0)
+            {
+                resolve('Books by target found!')
+            }
+            else{
+                resolve('No books found!')
+            }
+        },2000)
+    }).then((successMessage)=>{
+        console.log(successMessage);
+        return filteredBooks;
+    }).catch(err=>console.error(err))
+}
+
 public_users.post("/register", async (req,res) => {
   //Write your code here
   return new Promise((resolve,reject)=>{
@@ -41,101 +119,54 @@ public_users.post("/register", async (req,res) => {
 // Get the book list available in the shop
 public_users.get('/', async function (req, res) {
   //Write your code here
-  return new Promise((resolve,reject)=>{
-      resolve('List of books found!');
-      return res.send(JSON.stringify(books,null,4));
-  }).then(successMessage=>{
-    console.log('Message from callback '+successMessage)
-  }).catch((err)=>console.error(err))
+  const bookList = await getAllBooks();
+  return res.status(200).send(`This is the list of all books:\n${JSON.stringify(bookList,null,4)}`);
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',async function (req, res) {
   //Write your code here
-  return new Promise((resolve,reject)=>{
-
-      const targetIsbn = req.params.isbn;
-      if(books[targetIsbn]){
-        resolve(`Isbn found!`);
-        res.send(`This is the information for ${targetIsbn}:\n${JSON.stringify(books[targetIsbn],null,4)}\n`);
-      }
-      else{
-        resolve(`Isbn not found!`)
-        res.send("This is not a valid isbn\n");
-        return;
-      }
-  }).then((successMessage)=>{
-    console.log("Message from callback "+successMessage)
-  }).catch((err)=>console.error(err))
+  const bookList = await getBooksByISBN(req.params.isbn);
+  if(bookList)
+    res.status(200).send(`Here is the book with the isbn of ${JSON.stringify(bookList,null,4)}:\n`);
+   else
+    res.status(404).json({message:'Book with that isbn not found'});
  });
   
 // Get book details based on author
 public_users.get('/author/:author', async function (req, res) {
   //Write your code here
-  return new Promise((resolve,reject)=>{
-      const targetAuthor = req.params.author;
-        const filteredBooks = [];
-        for(i in books){
-            if(books[i].author ===  targetAuthor){
-                filteredBooks.push(books[i]);
-            }
-        }
-        if(filteredBooks.length>0)
-        {
-            resolve(`Books by author ${targetAuthor} found!`)
-            return res.send(`These are the books made by the author ${targetAuthor}:\n${JSON.stringify(filteredBooks,null,4)}\n`);
-        }
-        else{
-            resolve(`No books by author ${targetAuthor} found!`)
-           return res.send("We do not have any books by that author.\n");
-        }
-  }).then((successMessage)=>{
-    console.log('Message from callback' + successMessage);
-  }).catch((err)=>console.error(err))
+  const bookList = await getBooksByAuthor(req.params.author);
+  if(bookList.length>0)
+    return res.status(200).send(`These are the books made by the author ${req.params.author}:\n${JSON.stringify(bookList,null,4)}\n`);
+  else
+    return res.status(404).json({message:'Books by that author not found'});
+
 });
 
 // Get all books based on title
 public_users.get('/title/:title', async function (req, res) {
   //Write your code here
-  return new Promise((resolve,reject)=>{
-      const targetTitle = req.params.title;
-      const filteredBooks = [];
-      for(i in books){
-        if(books[i].title === targetTitle){
-            filteredBooks.push(books[i]);
-        }
-      }
-      if(filteredBooks.length>0){
-        resolve(`Books with the title ${targetTitle} found!`);
-        return res.send(`These are the books with the following title ${targetTitle}:\n ${JSON.stringify(filteredBooks,null,4)}`);
-      }
-      else{
-        resolve(`No books with the title ${targetTitle} found!`);
-        return res.send("We do not have any books with that title.\n");
-      }
-  }).then(successMessage=>{
-    console.log('Message from callback '+successMessage);
-  })
+  const bookList = await getBooksByTitle(req.params.title);
+  if(bookList.length>0)
+    return res.status(200).send(`These are the books made by the title ${req.params.title}:\n${JSON.stringify(bookList,null,4)}\n`);
+  else
+    return res.status(404).json({message:'Books by that title not found'});
 });
 
 //  Get book review
 public_users.get('/review/:isbn',async function (req, res) {
   //Write your code here
 
-  return new Promise((resolve,reject)=>{
-      const targetIsbn = req.params.isbn;
-      if(books[targetIsbn])
-      {
-        resolve(`Reviews for ${targetIsbn} found!`);
-        return res.send(`This is the review listed for book ${targetIsbn}:\n${JSON.stringify(books[targetIsbn].reviews,null,4)}\n`)
-      }
-      else{
-        resolve(`No reviews for ${targetIsbn} found!`)
-        return res.send('There are no books with that ISBN.\n')
-      }
-  }).then(successMessage =>{
-    console.log('Message from callback '+successMessage)
-  }).catch((err)=>console.error(err))
+  const bookList = await getBooksByISBN(req.params.isbn);
+  if(bookList){
+    if(bookList.review)
+      res.status(200).send(`Here is the review for the book with the isbn of ${JSON.stringify(bookList.review,null,4)}:\n`);
+    else
+       res.status(200).send('No reviews for this book yet\n');
+  }
+   else
+    res.status(404).json({message:'Book with that isbn not found'});
 });
 
 module.exports.general = public_users;
