@@ -2,6 +2,7 @@ const express = require('express');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
+const axios = require('axios');
 const public_users = express.Router();
 
 
@@ -9,7 +10,7 @@ const getAllBooks = async() =>{
     return await new Promise((resolve,reject)=>{
         setTimeout(()=>{
             resolve('All books found!');
-        },2000)   
+        },200)   
     }).then((successMessage)=>{
         console.log(successMessage);
         return books;
@@ -29,7 +30,7 @@ const getBooksByISBN = async(isbn) => {
             {
                 resolve('Target Isbn not found!\n')
             }
-        },3000)
+        },200)
     }).then((successMessage)=>{
         console.log(successMessage);
         if(exists)
@@ -53,7 +54,7 @@ const getBooksByAuthor = async(targetAuthor) => {
             else{
                 resolve('No books found!')
             }
-        },2000)
+        },200)
     }).then((successMessage)=>{
         console.log(successMessage);
         return filteredBooks;
@@ -76,7 +77,7 @@ const getBooksByTitle = async(targetTitle) =>{
             else{
                 resolve('No books found!')
             }
-        },2000)
+        },200)
     }).then((successMessage)=>{
         console.log(successMessage);
         return filteredBooks;

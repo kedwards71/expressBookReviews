@@ -91,10 +91,10 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
             return res.status(200).send(`Your review of '${books[targetIsbn].reviews[req.user]}' has been successfully left.\n`);
         }
     } else {
-        return res.status(403).json('You need to be registered and logged in to leave a review!\n');
+        return res.status(403).json({message:'You need to be registered and logged in to leave a review!'});
     }
   }else{
-    return res.status(404).json('The book with that ISBN doesnt exist in our records\n')
+    return res.status(404).json({message:'The book with that ISBN doesnt exist in our records'})
   }
 });
 
@@ -111,16 +111,16 @@ regd_users.delete('/auth/review/:isbn',(req,res) =>{
                 return res.status(200).send('Your review was successfully deleted.')
             }
             else{
-                return res.status(404).json('There is no review for this user.');
+                return res.status(404).json({message:'There is no review for this user.'});
             }
 
         }
         else{
-            return res.status(403).json('You need to be registed and logged in to delete one of your reviews!\n');
+            return res.status(403).json({message:'You need to be registed and logged in to delete one of your reviews!'});
         }
 
     }else{
-        return res.status(404).json('The book with that ISBN doesnt exist in our records\n');
+        return res.status(404).json({message:'The book with that ISBN doesnt exist in our records!'});
     }
 })
 
