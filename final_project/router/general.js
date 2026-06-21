@@ -28,10 +28,7 @@ public_users.post("/register", (req,res) => {
   }
 });
 
-//  View users
-public_users.get('/users',function(req,res){
-    res.send(JSON.stringify(users,null,4))
-})
+
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
