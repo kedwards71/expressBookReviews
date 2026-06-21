@@ -55,7 +55,7 @@ regd_users.post("/login", (req,res) => {
             req.session.authorization = {
                 accessToken, username
             }
-            return res.status(200).send(`Welcome ${loginCredentials.username}\t${req.session.authorization.accessToken}\n`);
+            return res.status(200).send(`${req.session.authorization.accessToken}`);
         }
         else
             return res.status(208).json({message:"Invalid login check username and password again"});
@@ -66,8 +66,9 @@ regd_users.post("/login", (req,res) => {
   }
 });
 
+
 regd_users.get("/auth/viewall",(req,res)=>{
-    res.send(req.session.username)
+    res.send(req.user)
 })
 
 // Add a book review
